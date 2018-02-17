@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="prog2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/gamecontroller-gui.jar!/" />
+      <root url="jar://$PROJECT_DIR$/gamecontroller-cli.jar!/" />
+      <root url="jar://$PROJECT_DIR$/kiosk.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
