@@ -8,6 +8,9 @@ public class RandomAgent implements Agent
 	private int playclock; // this is how much time (in seconds) we have before nextAction needs to return a move
 	private boolean myTurn; // whether it is this agent's turn or not
 	private int width, height; // dimensions of the board
+
+	private Environment environment;
+	private State state;
 	
 	/*
 		init(String role, int playclock) is called once before you have to select the first action. Use it to initialize the agent. role is either "white" or "black" and playclock is the number of seconds after which nextAction must return.
@@ -19,7 +22,11 @@ public class RandomAgent implements Agent
 		this.width = width;
 		this.height = height;
 		// TODO: add your own initialization code here
-		
+
+		environment = new Environment(width, height);
+		state = new State(environment, role);
+
+		System.out.println("*** Initial Environment ***\n" + state.getEnvironment());
     }
 
 	// lastMove is null the first time nextAction gets called (in the initial state)
@@ -35,6 +42,11 @@ public class RandomAgent implements Agent
     		}
    			System.out.println(roleOfLastPlayer + " moved from " + x1 + "," + y1 + " to " + x2 + "," + y2);
     		// TODO: 1. update your internal world model according to the action that was just executed
+
+			state.makeAction(new Action(new Position(x1, y1), new Position(x2, y2), false));
+			environment.make_move(x1, y1, x2, y2, roleOfLastPlayer);
+
+			System.out.println("*** Environment Before turn ***\n" + state.getEnvironment());
     		
     	}
 		
@@ -55,6 +67,10 @@ public class RandomAgent implements Agent
 				y1 = random.nextInt(height-1)+2;
 				y2 = y1 - 1;
 			}
+
+			state.makeAction(new Action(new Position(x1, y1), new Position(x2, y2), false));
+			System.out.println("*** Environment After turn ***\n" + state.getEnvironment());
+
 			return "(move " + x1 + " " + y1 + " " + x2 + " " + y2 + ")";
 		} else {
 			return "noop";
