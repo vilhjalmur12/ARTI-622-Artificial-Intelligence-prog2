@@ -6,12 +6,14 @@ import java.util.Set;
 
 public class State {
 
-    private enum  Results { loss, win, unknown }
+    private enum  Results { loss, win, unknown, draw }
 
     private String player;
-    private Results result = Results.unknown;
+    private Results result;
     private Environment environment;
     private Action action;
+    private List<Action> myLegalActions;
+    private List<Action> enemyLegalActions;
 
 
     public State () {
@@ -21,6 +23,12 @@ public class State {
     public State (Environment environment, String player) {
         this.environment = environment;
         this.player = player;
+        this.myLegalActions = getLegalActions();
+        this.switchPlayer();
+        this.enemyLegalActions = getLegalActions();
+        this.switchPlayer();
+
+        evaluateWin();
     }
 
     public List<Action> getLegalActions() {
@@ -86,6 +94,7 @@ public class State {
         return actions;
     }
 
+
     public void makeAction (Action action) {
         this.environment.make_move(action.from.x, action.from.y, action.to.x, action.to.y, player);
     }
@@ -94,17 +103,6 @@ public class State {
         this.environment.make_move(action.from.x, action.from.y, action.to.x, action.to.y, player);
     }
 
-    // was needed for the agent since environment gets updated after making move
-    public void makeLastAction (Action action) {
-        String lastPlayer = "";
-        if (player.equals("white")) {
-            lastPlayer.equals("black");
-        } else {
-            lastPlayer.equals("white");
-        }
-
-        this.environment.make_move(action.from.x, action.from.y, action.to.x, action.to.y, lastPlayer);
-    }
 
     public Environment getEnvironment() {
         return this.environment;
@@ -116,8 +114,93 @@ public class State {
     }
 
     private boolean blackTurn() {
-        return this.player.equals("white");
+        return this.player.equals("black");
+    }
+
+    public void switchPlayer() {
+        if (player.equals("white")) {
+            this.player = "black";
+        } else {
+            this.player = "white";
+        }
+    }
+
+    public String getPlayer () {
+        return this.player;
+    }
+
+    public boolean gameOver() {
+        return this.result != Results.unknown;
+    }
+
+    private void evaluateWin() {
+        if (this.enemyLegalActions.isEmpty() && this.myLegalActions.isEmpty())
+        {
+            this.result = Results.draw;
+        }
+        else if (this.myLegalActions.isEmpty())
+        {
+            this.result = Results.loss;
+        }
+        else if (this.enemyLegalActions.isEmpty())
+        {
+            this.result = Results.win;
+        }
+        else {
+            this.result = Results.unknown;
+        }
+
+    }
+
+    public boolean playerIsWinner() {
+        return this.result == Results.win;
+    }
+
+    public boolean playerIsLoser() {
+        return this.result == Results.loss;
+    }
+
+    public boolean isDraw() {
+        return this.result == Results.draw;
+    }
+
+    public int myPlayerCount() {
+        if (player.equals("white")) {
+            return this.environment.getWhitePositions().size();
+        }
+        else
+        {
+            return this.environment.getBlackPositions().size();
+        }
+    }
+
+    public int enemyPlayerCount() {
+        if (player.equals("black")) {
+            return this.environment.getWhitePositions().size();
+        }
+        else
+        {
+            return this.environment.getBlackPositions().size();
+        }
     }
 
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+
+        if (player.equals("white")) {
+            for (Position pos : environment.getWhitePositions()) {
+                result += pos.hashCode() * 3;
+            }
+        } else {
+            for (Position pos : environment.getBlackPositions()) {
+                result += pos.hashCode() * 3;
+            }
+        }
+        result = prime * result;
+
+        return result;
+    }
 }

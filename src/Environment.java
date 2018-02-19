@@ -7,6 +7,8 @@ public class Environment {
 
     private int board_width;
     private int board_height;
+    private Set<Position> white_positions = new HashSet<>();
+    private Set<Position> black_positions = new HashSet<>();
 
     public Environment () {}
 
@@ -14,8 +16,12 @@ public class Environment {
         init_environment(s_width, s_height);
     }
 
-    private Set<Position> white_positions = new HashSet<>();
-    private Set<Position> black_positions = new HashSet<>();
+    public Environment (int s_width, int s_height, Set<Position> whitePos, Set<Position> blackPositions) {
+        this.board_width = s_width;
+        this.board_height = s_height;
+        this.white_positions = whitePos;
+        this.black_positions = blackPositions;
+    }
 
     public void init_environment (int s_width, int s_height) {
         this.board_height = s_height;
@@ -99,6 +105,13 @@ public class Environment {
         return white_positions.contains(new Position(pos.x - 1, pos.y - 1));
     }
 
+    public int getBoard_width() {
+        return this.board_width;
+    }
+
+    public int getBoard_height() {
+        return this.board_height;
+    }
 
     @Override
     public String toString() {

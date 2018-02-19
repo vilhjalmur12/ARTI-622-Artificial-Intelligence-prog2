@@ -1,5 +1,8 @@
+import javafx.scene.paint.Stop;
+
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 public class GreedyTestAgent implements Agent {
     private Random random = new Random();
@@ -53,25 +56,16 @@ public class GreedyTestAgent implements Agent {
         myTurn = !myTurn;
         if (myTurn) {
             // TODO: 2. run alpha-beta search to determine the best move
-            // Here we just construct a random move (that will most likely not even be possible),
-            // this needs to be replaced with the actual best move.
-            /*
-            int x1,y1,x2,y2;
-            x1 = random.nextInt(width)+1;
-            x2 = x1 + random.nextInt(3)-1;
-            if (role.equals("white")) {
-                y1 = random.nextInt(height-1);
-                y2 = y1 + 1;
-            } else {
-                y1 = random.nextInt(height-1)+2;
-                y2 = y1 - 1;
-            }
-            */
 
-            Action action = getGreedyAction();
+
+            // new timer
+            Stopwatch timer = new Stopwatch();
+            //Action action = getGreedyAction();
+            Action action = ActionBFS();
 
             //state.makeAction(action);
-
+            System.out.println("Time elapsed after decision: " + timer.elapsedTime());
+            System.out.println("Playclock: " + playclock);
             return "(move " + action.from.x + " " + action.from.y + " " + action.to.x + " " + action.to.y + ")";
         } else {
             return "noop";
@@ -84,13 +78,11 @@ public class GreedyTestAgent implements Agent {
         // TODO: cleanup so that the agent is ready for the next match
     }
 
+    // TODO: TEST
     private Action getGreedyAction() {
         List<Action> legalActions = state.getLegalActions();
 
-        for (Action a : legalActions) {
-            // TODO: TEST
-            System.out.println("Available action: " + a);
-        }
+
 
 
         for (Action act : legalActions) {
@@ -100,4 +92,19 @@ public class GreedyTestAgent implements Agent {
         }
         return legalActions.get(0);
     }
+
+    // TODO: TEST
+    private Action ActionBFS() {
+        StateNode root = new StateNode(null, this.state, null, true);
+        BFS searchTree = new BFS(root, 5);
+
+        StateNode bestNode = searchTree.getBestFirstNode();
+        Action action = bestNode.getAction();
+        // TODO: TEST
+        //System.out.println("*** Environment ActionBFS ***\n" + state.getEnvironment());
+        System.out.println("Best node score: " + bestNode.getScore());
+
+        return action;
+    }
+
 }
